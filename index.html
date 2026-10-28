@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"/>
+<title>MOSS // 流浪地球 3 概念设计解说 · 120s</title>
+
+<meta name="description" content="纯 Three.js 实时渲染的 120 秒《流浪地球 3》概念设计解说：MOSS 第一视角、科技 HUD、从蓝图线稿到 3D 建模逐帧生成。无外部模型、无贴图、无音频文件，全部由代码生成。"/>
+<meta name="author" content="CodeAnt"/>
+<meta name="keywords" content="Three.js, WebGL, 流浪地球, MOSS, 概念设计, HUD, 程序化建模, AIGC, 实时渲染"/>
+<meta name="theme-color" content="#000000"/>
+<meta name="color-scheme" content="dark"/>
+
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="MOSS // 流浪地球 3 概念设计解说 · 120s"/>
+<meta property="og:description" content="12 段分镜 × 120 秒，MOSS 第一视角的科技 HUD 概念预告。所有几何体由代码生成，纯 WebGL 实时渲染。"/>
+<meta property="og:image" content="assets/img/cover.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="MOSS // 流浪地球 3 概念设计解说 · 120s"/>
+<meta name="twitter:description" content="纯 Three.js 实时渲染的概念预告，从蓝图线稿到 3D 建模逐帧生成。"/>
+<meta name="twitter:image" content="assets/img/cover.png"/>
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233dffb5' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%233dffb5'/%3E%3C/svg%3E"/>
+<link rel="stylesheet" href="assets/css/moss.css"/>
+</head>
+<body>
+<div id="app">
+  <canvas id="gl" aria-label="MOSS 概念设计实时渲染画面"></canvas>
+  <div id="fx-vig"></div>
+  <div id="fx-scan"></div>
+  <div id="fx-flick"></div>
+  <div id="labels"></div>
+
+  <div id="hud">
+    <div class="frame"><i></i><i></i><i></i><i></i></div>
+    <header>
+      <div>
+        <div class="brand"><span class="dot"></span>MOSS<em>//550W</em></div>
+        <div class="mission">流浪地球计划 · 概念设计档案 · 非官方</div>
+      </div>
+      <div class="shot"><b id="shotNo">01</b><i>/12</i><span id="shotCode">F.I.G. 00-0001</span></div>
+    </header>
+
+    <aside id="telemetry" aria-label="遥测数据"></aside>
+
+    <div id="sceneTitle">
+      <span class="kicker" id="stKicker">SHOT 01 · BOOT SEQUENCE</span>
+      <h1 id="stTitle">MOSS 已唤醒</h1>
+      <p id="stDesc">文明延续概率评估 / 全系统自检</p>
+    </div>
+
+    <div id="subtitle"><span class="who">MOSS</span><span id="subText"></span></div>
+    <div id="watermark"><b>SRC-3</b> // CONCEPT ARCHIVE<br/>AIGC CONCEPT · NOT CANON<br/><span id="wmLine">SIGNAL LOCK 0x7F2A</span></div>
+    <div id="stamp">CLASSIFIED · 概念推演</div>
+    <div id="chapter"></div>
+
+    <div id="progress" role="slider" tabindex="0" aria-label="播放进度"><div class="track"></div><div id="bar"></div><div id="ticks"></div></div>
+    <div id="controls">
+      <button id="btnPlay" title="播放 / 暂停（空格）">❚❚ 暂停</button>
+      <button id="btnRestart" title="从头重播">⟲ 重播</button>
+      <button id="btnSound" class="active" title="声音开关（M）">♪ 声音</button>
+      <button id="btnBoard" title="打开分镜表（B）">☰ 分镜</button>
+      <button id="btnFull" title="全屏（F）">⛶ 全屏</button>
+    </div>
+    <div id="clock"><b id="clkNow">00:00</b> / 02:00</div>
+  </div>
+
+  <div id="gate">
+    <div class="ring"><i></i><i></i><i></i><i></i><div class="core"></div></div>
+    <div class="gate-txt">
+      <h2>MOSS · 550W</h2>
+      <div class="cn">文 明 延 续 概 率 评 估</div>
+      <div class="sub">120 秒概念设计解说 / 第一视角 / 非官方推演</div>
+    </div>
+    <button id="enter">唤 醒 MOSS</button>
+    <div class="gate-foot">本作品为 AIGC 概念设计分享，与片方无关，不含真实演员与未公布剧情<br/>建议佩戴耳机 · 全屏观看</div>
+  </div>
+
+  <div id="storyboard">
+    <button id="sbClose">CLOSE</button>
+    <h3>SHOT LIST / 12 × 8–12s</h3>
+    <div class="hint">点击任意分镜跳转 · 总时长 120 秒</div>
+    <div id="sbGrid"></div>
+  </div>
+
+  <div id="toast"></div>
+  <div id="fade"></div>
+
+  <noscript>
+    <div style="position:fixed;inset:0;z-index:99;display:grid;place-items:center;background:#000;
+      color:#3dffb5;font:12px/2 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.2em;text-align:center;padding:24px">
+      MOSS // 需要启用 JavaScript 才能进行实时渲染
+    </div>
+  </noscript>
+</div>
+
+<!-- 全部为本地文件：零 CDN、零外部模型、零贴图、零音频素材 -->
+<script src="assets/js/vendor/three.min.js"></script>
+<script src="assets/js/core.js"></script>
+<script src="assets/js/scenes.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+# Cloudflare Pages / Workers 静态资源响应头
+# https://developers.cloudflare.com/pages/configuration/headers/
+
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: accelerometer=(), camera=(), geolocation=(), microphone=()
+  Cache-Control: public, max-age=0, must-revalidate
+
+# 版本化的第三方库：内容永不改变，可长期强缓存
+/assets/js/vendor/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# 自研脚本与样式：每次上线都需要校验新鲜度
+/assets/js/*
+  Cache-Control: public, max-age=300, must-revalidate
+
+/assets/css/*
+  Cache-Control: public, max-age=300, must-revalidate
+
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
