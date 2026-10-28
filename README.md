@@ -168,6 +168,8 @@ cd moss-wandering-earth-3-concept
 ├─ docs/                          # 预览图（仅 README 使用，不参与运行）
 ├─ .github/workflows/deploy-pages.yml
 ├─ _headers                       # Cloudflare 缓存与安全响应头
+├─ wrangler.jsonc                 # Cloudflare Workers 静态资源模式（可选）
+├─ .assetsignore                  # 上一条模式下的上传忽略清单
 └─ .nojekyll                      # GitHub Pages 跳过 Jekyll
 ```
 
@@ -206,7 +208,7 @@ npx wrangler pages deploy . --project-name moss-we3-concept
 
 仓库根目录的 `_headers` 会被 Cloudflare 读取：`three.min.js` 强缓存一年，自研脚本 5 分钟校验，并附带 `nosniff` / `Referrer-Policy` / `Permissions-Policy`。
 
-> 想用 Cloudflare Workers 静态资源托管也可以，在 `wrangler.jsonc` 里把 `assets.directory` 指向 `.` 即可，`_headers` 同样生效。
+> 想用 Cloudflare **Workers** 静态资源托管也可以：仓库已带 `wrangler.jsonc`，直接 `npx wrangler deploy` 即可，`.assetsignore` 会把 `.git`、`docs`、README 这些非运行时文件排除在外，`_headers` 同样生效。
 
 ### 部署到自己的域名
 

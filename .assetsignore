@@ -1,0 +1,11 @@
+# Cloudflare 上传时忽略的路径（只在 wrangler.jsonc 的静态资源模式下生效）
+.git
+.github
+.workbuddy
+node_modules
+docs
+README.md
+LICENSE
+.gitignore
+.gitattributes
+wrangler.jsonc

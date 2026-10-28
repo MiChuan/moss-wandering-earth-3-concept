@@ -1,0 +1,12 @@
+{
+  // Cloudflare Workers 静态资源托管配置（可选路径）
+  // 部署：npx wrangler deploy
+  // 若更习惯 Cloudflare Pages，可忽略此文件，按 README 的 Pages 流程操作。
+  "$schema": "https://raw.githubusercontent.com/cloudflare/workers-sdk/main/packages/wrangler/config-schema.json",
+  "name": "moss-we3-concept",
+  "compatibility_date": "2026-01-01",
+  "assets": {
+    "directory": ".",
+    "not_found_handling": "single-page-application"
+  }
+}
